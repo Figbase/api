@@ -1,0 +1,4 @@
+[build]
+# Just plain old shell command. `make` could be used as well.
+
+cmd = "go build -o ./tmp/main ./cmd"
