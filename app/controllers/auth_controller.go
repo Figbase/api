@@ -6,11 +6,11 @@ import (
 
 	"time"
 
-	"github.com/MTNNigeria/odyssey/app/models"
-	"github.com/MTNNigeria/odyssey/pkg/utils"
+	"github.com/Figbase/api/app/models"
+	"github.com/Figbase/api/pkg/utils"
 
-	"github.com/MTNNigeria/odyssey/platform/cache"
-	"github.com/MTNNigeria/odyssey/platform/database"
+	"github.com/Figbase/api/platform/cache"
+	"github.com/Figbase/api/platform/database"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"

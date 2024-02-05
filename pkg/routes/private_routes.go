@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"github.com/MTNNigeria/odyssey/app/controllers"
-	"github.com/MTNNigeria/odyssey/pkg/middleware"
+	"github.com/Figbase/api/app/controllers"
+	"github.com/Figbase/api/pkg/middleware"
 	"github.com/gofiber/fiber/v2"
 )
 

@@ -1,18 +1,18 @@
 package main
 
 import (
-	"github.com/MTNNigeria/odyssey/pkg/middleware"
-	"github.com/MTNNigeria/odyssey/pkg/routes"
-	"github.com/MTNNigeria/odyssey/platform/database"
+	"github.com/Figbase/api/pkg/middleware"
+	"github.com/Figbase/api/pkg/routes"
+	"github.com/Figbase/api/platform/database"
 	"github.com/gofiber/fiber/v2"
 )
 
-// @title Odyssey API
+// @title Figbase API
 // @version 1.0
-// @description This is an auto-generated API Docs.
+// @description Powering the Future of Hiring OS.
 // @termsOfService http://swagger.io/terms/
 // @contact.name API Support
-// @contact.email zyro.kamson@mtn.com
+// @contact.email support@figbase.co
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 // @BasePath /api

@@ -3,7 +3,7 @@ package utils
 import (
 	"fmt"
 
-	"github.com/MTNNigeria/odyssey/pkg/repository"
+	"github.com/Figbase/api/pkg/repository"
 )
 
 // GetCredentialsByRole func for getting credentials from a role name.

@@ -3,7 +3,7 @@ package utils
 import (
 	"fmt"
 
-	"github.com/MTNNigeria/odyssey/pkg/repository"
+	"github.com/Figbase/api/pkg/repository"
 )
 
 // VerifyRole func for verifying a given role.

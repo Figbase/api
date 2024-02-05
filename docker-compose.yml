@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  odyssey:
+  figbase:
     build: .
     env_file:
       - .env
@@ -13,7 +13,7 @@ services:
       - db
       - cache
     networks:
-      - odyssey
+      - figbase
     # command: go run cmd/main.go -b 0.0.0.0
     command: air ./cmd/main.go -b 0.0.0.0
   db:
@@ -25,7 +25,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - odyssey
+      - figbase
     volumes:
       - postgres-db:/var/lib/postgresql/data
   cache:
@@ -42,11 +42,11 @@ services:
     volumes: 
       - redis-cache:/var/lib/redis/data
     networks:
-      - odyssey
+      - figbase
 
 volumes:
   postgres-db:
   redis-cache:
 
 networks:
-  odyssey:
+  figbase:

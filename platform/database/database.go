@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/MTNNigeria/odyssey/app/models"
+	"github.com/Figbase/api/app/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

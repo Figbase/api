@@ -1,4 +1,4 @@
-module github.com/MTNNigeria/odyssey
+module github.com/Figbase/api
 
 go 1.21.6
 
