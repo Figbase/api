@@ -15,8 +15,8 @@ func PublicRoutes(a *fiber.App) {
 	// route.Get("/book/:id", controllers.GetBook) // get one book by ID
 
 	// Routes for POST method:
-	route.Post("/user/sign/up", controllers.UserSignUp) // register a new user
-	route.Post("/user/sign/in", controllers.UserSignIn) // auth, return Access & Refresh tokens
+	route.Post("/auth/signup", controllers.UserSignUp) // register a new user
+	route.Post("/auth/signin", controllers.UserSignIn) // auth, return Access & Refresh tokens
 	// route.Post("/analysis/ocr", controllers.PerformOCR)            // auth, return Access & Refresh tokens
 	// route.Post("/analysis/ocr-plain", controllers.PerformOCRPlain) // auth, return Access & Refresh tokens
 	// route.Post("/analysis/ocr-base", controllers.PerformBaseOCR)   // auth, return Access & Refresh tokens

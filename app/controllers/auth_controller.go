@@ -40,7 +40,15 @@ func UserSignUp(c *fiber.Ctx) error {
 		})
 	}
 
-	//TODO: Checking if email has been used to signup before.
+	// Check if the email has been used to signup before.
+	existingUser := &models.User{}
+	if err := database.DB.Db.Where("email = ?", signUp.Email).First(existingUser).Error; err == nil {
+		// Return status 400 and error message indicating that the email is already registered.
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error":   true,
+			"message": "Email address is already registered",
+		})
+	}
 
 	// Create a new validator for a User model.
 	validate := utils.NewValidator()
