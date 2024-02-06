@@ -78,6 +78,8 @@ func UserSignUp(c *fiber.Ctx) error {
 	user.ID = uuid.New()
 	user.CreatedAt = time.Now()
 	user.Email = signUp.Email
+	user.FirstName = signUp.FirstName
+	user.LastName = signUp.LastName
 	user.PasswordHash = utils.GeneratePassword(signUp.Password)
 	user.UserStatus = 1 // 0 == blocked, 1 == active
 	user.UserRole = role
@@ -192,7 +194,7 @@ func UserSignIn(c *fiber.Ctx) error {
 		// Return, if user not found.
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"status":  "error",
-			"message": "User with the given email is not found",
+			"message": "The email address does not exist",
 		})
 	}
 
@@ -202,7 +204,7 @@ func UserSignIn(c *fiber.Ctx) error {
 		// Return, if password is not compare to stored in database.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  "error",
-			"message": "Wrong user email address or password",
+			"message": "The email address or password is wrong",
 		})
 	}
 
