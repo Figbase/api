@@ -35,7 +35,7 @@ func UserSignUp(c *fiber.Ctx) error {
 	if err := c.BodyParser(signUp); err != nil {
 		// Return status 400 and error message.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error":   true,
+			"status":  "error",
 			"message": err.Error(),
 		})
 	}
@@ -45,7 +45,7 @@ func UserSignUp(c *fiber.Ctx) error {
 	if err := database.DB.Db.Where("email = ?", signUp.Email).First(existingUser).Error; err == nil {
 		// Return status 400 and error message indicating that the email is already registered.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error":   true,
+			"status":  "error",
 			"message": "Email address is already registered",
 		})
 	}
@@ -57,7 +57,7 @@ func UserSignUp(c *fiber.Ctx) error {
 	if err := validate.Struct(signUp); err != nil {
 		// Return, if some fields are not valid.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error":   true,
+			"status":  "error",
 			"message": utils.ValidatorErrors(err),
 		})
 	}
@@ -67,7 +67,7 @@ func UserSignUp(c *fiber.Ctx) error {
 	if err != nil {
 		// Return status 400 and error message.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error":   true,
+			"status":  "error",
 			"message": err.Error(),
 		})
 	}
@@ -87,7 +87,7 @@ func UserSignUp(c *fiber.Ctx) error {
 	if err := validate.Struct(user); err != nil {
 		// Return, if some fields are not valid.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error":   true,
+			"status":  "error",
 			"message": utils.ValidatorErrors(err),
 		})
 	}
@@ -96,7 +96,7 @@ func UserSignUp(c *fiber.Ctx) error {
 	if err := c.BodyParser(user); err != nil {
 		// Return status 400 and error message.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error":   true,
+			"status":  "error",
 			"message": err.Error(),
 		})
 	}
@@ -109,7 +109,7 @@ func UserSignUp(c *fiber.Ctx) error {
 
 	// Return status 200 OK.
 	return c.JSON(fiber.Map{
-		"error":   false,
+		"status":  "success",
 		"message": nil,
 		"user":    user,
 	})
@@ -133,7 +133,7 @@ func UserSignIn(c *fiber.Ctx) error {
 	if err := c.BodyParser(signIn); err != nil {
 		// Return status 400 and error message.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error":   true,
+			"status":  "error",
 			"message": err.Error(),
 		})
 	}
@@ -148,8 +148,8 @@ func UserSignIn(c *fiber.Ctx) error {
 	if result.Error != nil {
 		// Return, if user not found.
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error":   true,
-			"message": "user with the given email is not found",
+			"status":  "error",
+			"message": "User with the given email is not found",
 		})
 	}
 
@@ -158,8 +158,8 @@ func UserSignIn(c *fiber.Ctx) error {
 	if !compareUserPassword {
 		// Return, if password is not compare to stored in database.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error":   true,
-			"message": "wrong user email address or password",
+			"status":  "error",
+			"message": "Wrong user email address or password",
 		})
 	}
 
@@ -168,7 +168,7 @@ func UserSignIn(c *fiber.Ctx) error {
 	if err != nil {
 		// Return status 400 and error message.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error":   true,
+			"status":  "error",
 			"message": err.Error(),
 		})
 	}
@@ -178,7 +178,7 @@ func UserSignIn(c *fiber.Ctx) error {
 	if err != nil {
 		// Return status 500 and token generation error.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
+			"status":  "error",
 			"message": err.Error(),
 		})
 	}
@@ -193,7 +193,7 @@ func UserSignIn(c *fiber.Ctx) error {
 	if err != nil {
 		// Return status 500 and Redis connection error.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
+			"status":  "error",
 			"message": err.Error(),
 		})
 	}
@@ -203,14 +203,14 @@ func UserSignIn(c *fiber.Ctx) error {
 	if errSaveToRedis != nil {
 		// Return status 500 and Redis connection error.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
+			"status":  "error",
 			"message": errSaveToRedis.Error(),
 		})
 	}
 
 	// Return status 200 OK.
 	return c.JSON(fiber.Map{
-		"error":   false,
+		"status":  "success",
 		"message": nil,
 		"tokens": fiber.Map{
 			"access":  tokens.Access,
@@ -234,7 +234,7 @@ func UserSignOut(c *fiber.Ctx) error {
 	if err != nil {
 		// Return status 500 and JWT parse error.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
+			"status":  "error",
 			"message": err.Error(),
 		})
 	}
@@ -247,7 +247,7 @@ func UserSignOut(c *fiber.Ctx) error {
 	if err != nil {
 		// Return status 500 and Redis connection error.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
+			"status":  "error",
 			"message": err.Error(),
 		})
 	}
@@ -257,7 +257,7 @@ func UserSignOut(c *fiber.Ctx) error {
 	if errDelFromRedis != nil {
 		// Return status 500 and Redis deletion error.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
+			"status":  "error",
 			"message": errDelFromRedis.Error(),
 		})
 	}

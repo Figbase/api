@@ -31,7 +31,7 @@ func RenewTokens(c *fiber.Ctx) error {
 	if err != nil {
 		// Return status 500 and JWT parse error.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
+			"status":  "error",
 			"message": err.Error(),
 		})
 	}
@@ -43,7 +43,7 @@ func RenewTokens(c *fiber.Ctx) error {
 	if now > expiresAccessToken {
 		// Return status 401 and unauthorized error message.
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error":   true,
+			"status":  "error",
 			"message": "unauthorized, check expiration time of your token",
 		})
 	}
@@ -55,7 +55,7 @@ func RenewTokens(c *fiber.Ctx) error {
 	if err := c.BodyParser(renew); err != nil {
 		// Return, if JSON data is not correct.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error":   true,
+			"status":  "error",
 			"message": err.Error(),
 		})
 	}
@@ -65,7 +65,7 @@ func RenewTokens(c *fiber.Ctx) error {
 	if err != nil {
 		// Return status 400 and error message.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error":   true,
+			"status":  "error",
 			"message": err.Error(),
 		})
 	}
@@ -85,7 +85,7 @@ func RenewTokens(c *fiber.Ctx) error {
 		if result.Error != nil {
 			// Return, if user not found.
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"error":   true,
+				"status":  "error",
 				"message": "user with the given ID is not found",
 			})
 		}
@@ -95,7 +95,7 @@ func RenewTokens(c *fiber.Ctx) error {
 		if err != nil {
 			// Return status 400 and error message.
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"error":   true,
+				"status":  "error",
 				"message": err.Error(),
 			})
 		}
@@ -105,7 +105,7 @@ func RenewTokens(c *fiber.Ctx) error {
 		if err != nil {
 			// Return status 500 and token generation error.
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error":   true,
+				"status":  "error",
 				"message": err.Error(),
 			})
 		}
@@ -115,7 +115,7 @@ func RenewTokens(c *fiber.Ctx) error {
 		if err != nil {
 			// Return status 500 and Redis connection error.
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error":   true,
+				"status":  "error",
 				"message": err.Error(),
 			})
 		}
@@ -125,13 +125,13 @@ func RenewTokens(c *fiber.Ctx) error {
 		if errRedis != nil {
 			// Return status 500 and Redis connection error.
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error":   true,
+				"status":  "error",
 				"message": errRedis.Error(),
 			})
 		}
 
 		return c.JSON(fiber.Map{
-			"error":   false,
+			"status":  "success",
 			"message": nil,
 			"tokens": fiber.Map{
 				"access":  tokens.Access,
@@ -141,7 +141,7 @@ func RenewTokens(c *fiber.Ctx) error {
 	} else {
 		// Return status 401 and unauthorized error message.
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error":   true,
+			"status":  "error",
 			"message": "unauthorized, your session was ended earlier",
 		})
 	}
