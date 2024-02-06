@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"log"
 
 	"time"
 
@@ -26,7 +25,7 @@ import (
 // @Param password body string true "Password"
 // @Param user_role body string true "User role"
 // @Success 200 {object} models.User
-// @Router /v1/user/sign/up [post]
+// @Router /v1/auth/signup [post]
 func UserSignUp(c *fiber.Ctx) error {
 	// Create a new user auth struct.
 	signUp := &models.SignUp{}
@@ -63,7 +62,7 @@ func UserSignUp(c *fiber.Ctx) error {
 	}
 
 	// Checking role from sign up data.
-	role, err := utils.VerifyRole(signUp.UserRole)
+	role, err := utils.VerifyRole("user")
 	if err != nil {
 		// Return status 400 and error message.
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -104,14 +103,58 @@ func UserSignUp(c *fiber.Ctx) error {
 	// Create a new user with validated data.
 	database.DB.Db.Create(&user)
 
+	// Get role credentials from created user.
+	credentials, err := utils.GetCredentialsByRole(user.UserRole)
+	if err != nil {
+		// Return status 400 and error message.
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status":  "error",
+			"message": err.Error(),
+		})
+	}
+
+	// Generate a new pair of access and refresh tokens.
+	tokens, err := utils.GenerateNewTokens(user.ID.String(), credentials)
+	if err != nil {
+		// Return status 500 and token generation error.
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  "error",
+			"message": err.Error(),
+		})
+	}
+
+	// Create a new Redis connection.
+	connRedis, err := cache.RedisConnection()
+	if err != nil {
+		// Return status 500 and Redis connection error.
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  "error",
+			"message": err.Error(),
+		})
+	}
+
+	// Save refresh token to Redis.
+	errSaveToRedis := connRedis.Set(context.Background(), user.ID.String(), tokens.Refresh, 0).Err()
+	if errSaveToRedis != nil {
+		// Return status 500 and Redis connection error.
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"status":  "error",
+			"message": errSaveToRedis.Error(),
+		})
+	}
+
 	// Delete password hash field from JSON view.
 	user.PasswordHash = ""
 
-	// Return status 200 OK.
+	// Return status 200 OK with user details and tokens.
 	return c.JSON(fiber.Map{
 		"status":  "success",
 		"message": nil,
 		"user":    user,
+		"tokens": fiber.Map{
+			"access":  tokens.Access,
+			"refresh": tokens.Refresh,
+		},
 	})
 }
 
@@ -124,7 +167,7 @@ func UserSignUp(c *fiber.Ctx) error {
 // @Param email body string true "User Email"
 // @Param password body string true "User Password"
 // @Success 200 {string} status "ok"
-// @Router /v1/user/sign/in [post]
+// @Router /v1/auth/signin [post]
 func UserSignIn(c *fiber.Ctx) error {
 	// Create a new user auth struct.
 	signIn := &models.SignIn{}
@@ -183,8 +226,6 @@ func UserSignIn(c *fiber.Ctx) error {
 		})
 	}
 
-	log.Println(tokens)
-
 	// Define user ID.
 	userID := user.ID.String()
 
@@ -208,10 +249,14 @@ func UserSignIn(c *fiber.Ctx) error {
 		})
 	}
 
+	// Delete password hash field from JSON view.
+	user.PasswordHash = ""
+
 	// Return status 200 OK.
 	return c.JSON(fiber.Map{
 		"status":  "success",
 		"message": nil,
+		"user":    user,
 		"tokens": fiber.Map{
 			"access":  tokens.Access,
 			"refresh": tokens.Refresh,
@@ -227,7 +272,7 @@ func UserSignIn(c *fiber.Ctx) error {
 // @Produce json
 // @Success 204 {string} status "ok"
 // @Security ApiKeyAuth
-// @Router /v1/user/sign/out [post]
+// @Router /v1/auth/signout [post]
 func UserSignOut(c *fiber.Ctx) error {
 	// Get claims from JWT.
 	claims, err := utils.ExtractTokenMetadata(c)
