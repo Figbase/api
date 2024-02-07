@@ -6,6 +6,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+const (
+	apiKey = "my-super-secret-key"
+)
+
 // PrivateRoutes func for describe group of private routes.
 func PrivateRoutes(a *fiber.App) {
 	// Create routes group.
@@ -15,6 +19,8 @@ func PrivateRoutes(a *fiber.App) {
 	// route.Post("/book", middleware.JWTProtected(), controllers.CreateBook)           // create a new book
 	route.Post("/auth/signout", middleware.JWTProtected(), controllers.UserSignOut) // de-authorization user
 	route.Post("/token/renew", middleware.JWTProtected(), controllers.RenewTokens)  // renew Access & Refresh tokens
+
+	route.Post("/api-key", middleware.AuthMiddleware(apiKey), controllers.Home) // renew Access & Refresh tokens
 
 	// Routes for PUT method:
 	// route.Put("/book", middleware.JWTProtected(), controllers.UpdateBook) // update one book by ID
